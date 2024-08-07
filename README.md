@@ -1,6 +1,6 @@
 This is a simple HTTP Based Text Streaming service, where there are multiple providers available and the prvodiers can be switched out dynamically based on some criteria.
 
-##Design Overview
+Design Overview
 We'll create a server that:
 
 Provides a streaming endpoint for text.
@@ -12,7 +12,7 @@ The server will be designed to stream text data to a client, which will process 
 
 There are following APIs available : 
 
-##TEXT STREAMING API
+TEXT STREAMING API
 api/stream/text?text={string}  GET
 
 Optional Header -- [ switch-provider, true ]
