@@ -1,6 +1,7 @@
 package com.adkunwar.text.stream.service;
 
 import com.adkunwar.text.stream.InferenceProvider;
+import com.adkunwar.text.stream.SwitchStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +12,13 @@ public class ProviderService {
     private final Map<String, InferenceProvider> providers;
     private InferenceProvider currentProvider;
 
+    private final SwitchStrategy switchStrategy;
+
     @Autowired
-    public ProviderService(Map<String, InferenceProvider> providers) {
+    public ProviderService(Map<String, InferenceProvider> providers, SwitchStrategy switchStrategy) {
         this.providers = providers;
-        this.currentProvider = providers.get("default"); // Set initial provider
+        this.currentProvider = providers.getOrDefault("default", providers.get("providerA"));// Set initial provider
+        this.switchStrategy = switchStrategy;
     }
 
     public void switchProvider(String providerName) {
@@ -26,7 +30,10 @@ public class ProviderService {
         }
     }
 
-    public String processText(String text) {
-        return currentProvider.processText(text);
+    public String processText(String text, Map<String, String> headers) {
+        if(switchStrategy.checkForSwitch(headers)) {
+            this.currentProvider = switchStrategy.switchProviderSilently(this.providers, this.currentProvider.toString());
+        }
+        return this.currentProvider.processText(text);
     }
 }
